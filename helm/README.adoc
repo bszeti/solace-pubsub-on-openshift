@@ -1,0 +1,60 @@
+= Deploy Solace PubSub+ with Helm chart
+
+https://helm.sh/[Helm] is a simple tool to deploy applications on Kubernetes. Deployed Helm release and their resources can also be seen in the OpenShift UI.
+
+Check out the Solace PubSub+ Helm chart: https://github.com/SolaceProducts/pubsubplus-kubernetes-helm-quickstart/
+
+== Values file
+
+Here is a values file for small HA deployment:
+
+[source,yaml]
+----
+include::values-ha.yaml[]
+----
+
+To access non-http - messaging - endpoints through an OpenShift route we need to enable TLS, see details https://medium.com/itnext/how-to-access-your-app-behind-an-openshift-router-87cbae3e7185[here]. Alternatively you can use LoadBalancer (in cloud) or NodePort (on-prem) services. 
+So first you need to create the `tls-openshift` secret in the namespace that has the key/certificate.
+
+
+== Deploy chart
+
+The OpenShift - passthrough - routes are not created by the Helm chart, but they can easily be created with the `oc` CLI.
+
+Here are example commands to deploy the Helm chart from git source:
+
+[source,sh]
+----
+include::install.sh[]
+----
+
+Get the admin route hostname and open in the browser:
+
+```
+oc get route semp 
+```
+
+Open https://semp-pubsubplus-helm.apps.your_cluster_domain.com and login with `admin` and the password set in the values file. Make sure you create a queue and a user before trying to send messages.
+
+== Send/receive messages
+
+Different protocols can be used via different routes (hostnames), but all on port 443:
+
+[cols="1,4"]
+|===
+| SMF 
+| `tcps://smf-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| SMF over websocket
+| `wss://smfweb-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| AMQP
+| `amqps://amqp-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| MQTT
+| `ssl://mqtt-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| MQTT over websocket
+| `wss://mqttweb-pubsubplus-helm.apps.your_cluster_domain.com:443`
+|===
+
+== Additional notes
+
+* Deleting the Helm chart will keep the PVCs in the namespace - which is a safe choice to avoid unexpected data loss - but you should remember to delete those manually for a fresh deployment in the same namespace.
+

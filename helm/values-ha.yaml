@@ -1,0 +1,30 @@
+solace:
+  redundancy: true
+
+  usernameAdminPassword: secret
+
+  systemScaling:
+    maxConnections: 100
+    maxQueueMessages: 100
+    maxSpoolUsage: 150
+    cpu: 1
+    memory: 2500Mi
+
+securityContext:
+  enabled: false
+
+serviceAccount:
+  create: false
+
+tls:
+  enabled: true
+  serverCertificatesSecret: 'tls-openshift'
+
+service:
+  # service.type specifies how to expose the service: options include ClusterIP, NodePort, LoadBalancer (default if not specified)
+  type: ClusterIP
+
+storage:
+  persistent: true
+  size: 10Gi
+  monitorStorageSize: 500M
