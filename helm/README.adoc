@@ -2,7 +2,7 @@
 
 https://helm.sh/[Helm] is a simple tool to deploy applications on Kubernetes. Deployed Helm release and their resources can also be seen in the OpenShift UI.
 
-Check out the Solace PubSub+ Helm chart: https://github.com/SolaceProducts/pubsubplus-kubernetes-helm-quickstart/
+*Solace PubSub+ Helm chart*: https://github.com/SolaceProducts/pubsubplus-kubernetes-helm-quickstart/
 
 == Values file
 
@@ -10,7 +10,7 @@ Here is a values file for small HA deployment:
 
 [source,yaml]
 ----
-include::values-ha.yaml[]
++include::values-ha.yaml[]
 ----
 
 To access non-http - messaging - endpoints through an OpenShift route we need to enable TLS, see details https://medium.com/itnext/how-to-access-your-app-behind-an-openshift-router-87cbae3e7185[here]. Alternatively you can use LoadBalancer (in cloud) or NodePort (on-prem) services. 
@@ -25,7 +25,7 @@ Here are example commands to deploy the Helm chart from git source:
 
 [source,sh]
 ----
-include::install.sh[]
++include::install.sh[]
 ----
 
 Get the admin route hostname and open in the browser:
