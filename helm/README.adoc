@@ -9,9 +9,9 @@ https://helm.sh/[Helm] is a simple tool to deploy applications on Kubernetes. De
 Here is a values file for small HA deployment:
 
 [source,yaml]
-----
-+include::helm/values-ha.yaml[]
-----
+```
+include::values-ha.yaml[]
+```
 
 To access non-http - messaging - endpoints through an OpenShift route we need to enable TLS, see details https://medium.com/itnext/how-to-access-your-app-behind-an-openshift-router-87cbae3e7185[here]. Alternatively you can use LoadBalancer (in cloud) or NodePort (on-prem) services. 
 So first you need to create the `tls-openshift` secret in the namespace that has the key/certificate.
@@ -24,9 +24,9 @@ The OpenShift - passthrough - routes are not created by the Helm chart, but they
 Here are example commands to deploy the Helm chart from git source:
 
 [source,sh]
-----
-+include::install.sh[]
-----
+....
+include::install.sh[]
+....
 
 Get the admin route hostname and open in the browser:
 
