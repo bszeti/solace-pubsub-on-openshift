@@ -8,7 +8,6 @@ https://helm.sh/[Helm] is a simple tool to deploy applications on Kubernetes. De
 
 Here is a values file for small HA deployment:
 
-[source,yaml]
 ```
 include::values-ha.yaml[]
 ```
