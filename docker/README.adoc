@@ -1,0 +1,38 @@
+= Run Solace PubSub+ with Docker or Podman
+
+https://www.docker.com/products/docker-desktop/[Docker Desktop] and https://podman-desktop.io/[Podman Desktop] can be used to run containers on you local computer. 
+This is the easiest way to spin up an Event Broker instance and probably the first step to try the container based deployment.
+
+[NOTE]
+The `docker` and `podman` CLI commands in these examples are interchangeable depending on which container runtime you use.
+
+== Links
+
+* Docker: https://docs.solace.com/Get-Started/tutorial/event-broker-set-up.htm
+* DockerHub image: https://hub.docker.com/r/solace/solace-pubsub-standard
+
+== Use the container
+
+With local containers ww usually don't bother with TLS, so you can just start the container like:
+
+```
+podman run -d -p 8080:8080 -p 55555:55555 -p 8008:8008 -p 1883:1883 -p 8000:8000 -p 5672:5672 -p 9000:9000 -p 2222:2222 --shm-size=1g --env username_admin_globalaccesslevel=admin --env username_admin_password=admin --name=solace solace/solace-pubsub-standard
+```
+
+=== Configuration:
+
+* The Web UI is accessible at `http://localhost:8080`
+* Run `cli` with `podman exec -it solace cli`
+* Connect to ssh management port as `ssh admin@localhost -p 2222`
+
+Make sure you create a queue and a user before trying to send messages.
+
+=== Send/receive messages
+
+Different protocols can be used on different ports:
+
+* SMF: `tcp://localhost:55555`
+* SMF over websocket: `ws://localhost:8008`
+* AMQP: `amqp://localhost:5672`
+* MQTT: `tcp://localhost:1883`
+* MQTT over websocket: `ws://localhost:8000`
