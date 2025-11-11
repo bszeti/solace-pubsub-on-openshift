@@ -1,0 +1,7 @@
+= Run Solace PubSub+ with Docker or Podman
+
+https://www.docker.com/products/docker-desktop/[Docker Desktop] and https://podman-desktop.io/[Podman Desktop] can be used to run containers on you local computer. 
+This is the easiest way to spin up an Event Broker instance and probably the first step to try the container based deployment.
+
+[NOTE]
+The `docker` and `podman` CLI commands in these examples are interchangeable depending on which container runtime you use.
