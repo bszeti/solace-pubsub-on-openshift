@@ -39,7 +39,7 @@ service:
 storage:
   persistent: true
   size: 10Gi
-  monitorStorageSize: 500M
+  monitorStorageSize: 1Gi
 ----
 
 To access non-http - messaging - endpoints through an OpenShift route we need to enable TLS, see details https://medium.com/itnext/how-to-access-your-app-behind-an-openshift-router-87cbae3e7185[here]. Alternatively you can use LoadBalancer (in cloud) or NodePort (on-prem) services. 
@@ -98,7 +98,27 @@ Different protocols can be used via different routes (hostnames), but all on por
 | `wss://mqttweb-pubsubplus-helm.apps.your_cluster_domain.com:443`
 |===
 
+== Deployment overview
+
+The Helm chart is easy to understand and it creates a couple of resources:
+
+image::image/helm-resources.png[]
+
+The main component is a _StatefulSet_ with 3 pods - and a headless service:
+
+* `ha-pubsubplus-0` is the *primary* broker and the `ha-pubsubplus` _Service_ points to this `active` pod
+* `ha-pubsubplus-1` is a replica *backup* instance that takes over in case of the primary broker goes down
+* `ha-pubsubplus-2` is a *monitoring* instance. Its purpose is to detect failures and avoid split-brain scenarios.
+
+It's worth looking at the created _ConfigMap_ that has and init/startup script, and also an interesting readiness check: 
+
+* The `readiness_check.sh` is involved in the primary-backup failover mechanism. In case of issues it sets the Pod's label to `active=false`
+* There is custom _Role_ that permits label changes for the _ServiceAccount_ running the Pod
+
 == Additional notes
 
+* A random admin password is generated the first time if it's net set in `values.yaml`. After changing the admin password in the created _Secret_ we also have to update it manually in each Pod using the `cli`, see details https://docs.solace.com/Admin/Configuring-Internal-CLI-User-Accounts.htm[here].
+* The Helm chart is currently missing a feature to use an existing secret for admin password, which is a common use case in environments using a vault.
 * Deleting the Helm chart will keep the PVCs in the namespace - which is a safe choice to avoid unexpected data loss - but you should remember to delete those manually for a fresh deployment in the same namespace.
+* To resize the storage, we need to edit the created _PersistentVolumeClaims_ directly
 

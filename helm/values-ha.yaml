@@ -27,4 +27,4 @@ service:
 storage:
   persistent: true
   size: 10Gi
-  monitorStorageSize: 500M
+  monitorStorageSize: 1Gi
