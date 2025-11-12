@@ -1,6 +1,6 @@
 = Solace PubSub+ on OpenShift
 
-https://solace.com/products/event-broker/[Solace PubSub+ Event Broker] is a high-performance message broker that can run in different cloud providers and on-premise environments. 
+https://solace.com/products/event-broker/[Solace PubSub+ Event Broker] is a high-performance message broker that can run in different cloud hyperscalers and on-premise environments. 
 This guide is about deploying and using Solace PubSub+ on OpenShift.
 
 == Documentation and links
