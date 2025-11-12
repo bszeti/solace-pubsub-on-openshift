@@ -15,8 +15,7 @@ This guide is about deploying and using Solace PubSub+ on OpenShift.
 
 * link:docker[*Docker/Podman*]
 * link:helm[*Helm*]
-* link:quickstart[*Operator quickstart*]
-* link:operator-install[*Install operator*]
+* link:operator[*Operator*]
 
 == Other links
 
