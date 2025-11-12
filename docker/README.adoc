@@ -8,7 +8,8 @@ The `docker` and `podman` CLI commands in these examples are interchangeable dep
 
 == Links
 
-* Docker: https://docs.solace.com/Get-Started/tutorial/event-broker-set-up.htm
+* Starting with containers: https://docs.solace.com/Software-Broker/SW-Broker-Set-Up/Containers/Set-Up-Container-Image.htm
+* Run broker in Docker: https://docs.solace.com/Get-Started/tutorial/event-broker-set-up.htm
 * DockerHub image: https://hub.docker.com/r/solace/solace-pubsub-standard
 
 == Use the container

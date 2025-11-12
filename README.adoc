@@ -6,6 +6,7 @@ This guide is about deploying and using Solace PubSub+ on OpenShift.
 == Documentation and links
 
 * Even Broker docs: https://docs.solace.com/Software-Broker/SW-Broker-Set-Up/Setting-Up-SW-Brokers.htm
+* Deployments in K8s: https://docs.solace.com/Software-Broker/SW-Broker-Set-Up/QuickStarts.htm
 * Helm chart: https://github.com/SolaceProducts/pubsubplus-kubernetes-helm-quickstart/
 * Operator: https://github.com/SolaceProducts/pubsubplus-kubernetes-quickstart
 ** Operator on OpenShift 4: https://github.com/SolaceProducts/pubsubplus-openshift-quickstart/

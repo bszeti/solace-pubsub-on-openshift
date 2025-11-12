@@ -18,7 +18,7 @@ serviceAccount:
 
 tls:
   enabled: true
-  serverCertificatesSecret: 'tls-openshift'
+  serverCertificatesSecret: 'tls-cert'
 
 service:
   # service.type specifies how to expose the service: options include ClusterIP, NodePort, LoadBalancer (default if not specified)

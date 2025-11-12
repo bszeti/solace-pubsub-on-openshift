@@ -1,11 +1,17 @@
+# Install operator from catalog
+oc apply -f subscription.yaml
+
 # Create namespace
-oc new-project pubsubplus-helm
+oc new-project pubsubplus
 
 # TLS Secret
 oc create secret tls tls-cert --cert=tls.crt --key=tls.key
 
-# Use path of git https://github.com/SolaceProducts/pubsubplus-kubernetes-helm-quickstart/ 
-helm upgrade -i ha ~/git/pubsubplus-kubernetes-helm-quickstart/pubsubplus -f values-ha.yaml
+# Password for admin and monitor user
+oc apply -f secret-passwords.yaml
+
+# Create CR for the operator
+oc apply -f pubsub-ha.yaml
 
 # Create routes
 oc create route passthrough semp    --service=ha-pubsubplus --port=tls-semp

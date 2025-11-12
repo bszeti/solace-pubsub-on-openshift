@@ -30,7 +30,7 @@ serviceAccount:
 
 tls:
   enabled: true
-  serverCertificatesSecret: 'tls-openshift'
+  serverCertificatesSecret: 'tls-cert'
 
 service:
   # service.type specifies how to expose the service: options include ClusterIP, NodePort, LoadBalancer (default if not specified)
@@ -43,10 +43,10 @@ storage:
 ----
 
 To access non-http - messaging - endpoints through an OpenShift route we need to enable TLS, see https://medium.com/itnext/how-to-access-your-app-behind-an-openshift-router-87cbae3e7185[details explained here]. Alternatively you can use _LoadBalancer_ (in cloud) or _NodePort_ services. 
-So you need to create the `tls-openshift` secret in the namespace with the key/certificate as below.
+So you need to create the `tls-cert` secret in the namespace with the key/certificate as below.
 
 
-== Deploy chart
+== Deploy
 
 The OpenShift - passthrough - routes are not created by the Helm chart, but they can easily be created with the `oc` CLI.
 
@@ -58,7 +58,7 @@ Here are example commands to deploy the Helm chart from git source:
 oc new-project pubsubplus-helm
 
 # TLS
-oc create secret tls tls-openshift --cert=tls.crt --key=tls.key
+oc create secret tls tls-cert --cert=tls.crt --key=tls.key
 
 # Use path of git https://github.com/SolaceProducts/pubsubplus-kubernetes-helm-quickstart/ 
 helm upgrade -i ha ~/git/pubsubplus-kubernetes-helm-quickstart/pubsubplus -f values-ha.yaml

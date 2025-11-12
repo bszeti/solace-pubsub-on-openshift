@@ -1,0 +1,139 @@
+= Solace PubSub+ Event Broker Operator
+
+https://kubernetes.io/docs/concepts/extend-kubernetes/operator/[Kubernetes Operators] were designed to deploy complex - typically stateful - applications and manage their configuration a cloud-native way on K8s. 
+
+The *Solace PubSub+ Event Broker Operator* operator is _Certified_ for OpenShift and it's part of its default Software Catalog, which makes it the most convenient way to run the broker on a cluster.
+
+== Documentation and links
+
+* GitHub repo with guide and source: https://github.com/SolaceProducts/pubsubplus-kubernetes-quickstart
+** Parameter reference: https://github.com/SolaceProducts/pubsubplus-kubernetes-quickstart/blob/main/docs/EventBrokerOperatorParametersReference.md
+* OpenShift specific deployment:  https://github.com/SolaceProducts/pubsubplus-openshift-quickstart
+
+== Install operator
+
+The operator can be installed using the OpenShift Console - as a cluster admin - from _Ecosystem/Software Catalog_:
+
+image::image/operator-catalog.png[]
+
+Alternatively you can create s _Subscription_ resource:
+
+[source,yaml]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: pubsubplus-eventbroker-operator
+  namespace: openshift-operators
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: pubsubplus-eventbroker-operator
+  source: certified-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: pubsubplus-eventbroker-operator.v1.4.0
+----
+
+[NOTE]
+Don't use _Automatic_ update approval in production to avoid unexpected operator upgrades and potential issues related.
+
+After installing the operator you'll have a new _PubSubPlusEventBroker_ CRD in the cluster that can be used to create PubSub+ Event Broker deployment.
+
+== Deploy
+
+Here is an example _PubSubPlusEventBroker_ resource for an HA deployment:
+
+[source,yaml]
+----
+apiVersion: pubsubplus.solace.com/v1beta1
+kind: PubSubPlusEventBroker
+metadata:
+  name: ha
+spec:
+  redundancy: true
+  systemScaling:
+    maxConnections: 100
+    maxQueueMessages: 100
+    maxSpoolUsage: 100
+    messagingNodeCpu: "1"
+    messagingNodeMemory: "2500Mi"
+  storage:
+    messagingNodeStorageSize: 10Gi
+    monitorNodeStorageSize: 1Gi
+  service:
+    type: ClusterIP
+  tls:
+    enabled: true
+    serverTlsConfigSecret: tls-cert
+  adminCredentialsSecret: passwords
+  monitoringCredentialsSecret: passwords
+----
+
+Before creating this resource, we should prepare a few other resources in the namespace:
+
+* A _Secret_ with the admin and monitor user password, like this (or from a vault using _ExternalSecret_):
++
+[source,yaml]
+----
+kind: Secret
+apiVersion: v1
+metadata:
+  name: passwords
+stringData:
+  username_admin_password: admin
+  username_monitor_password: monitor
+----
+* A _Secret_ with key/cert for TLS. This is required to access non-http - messaging - endpoints through an OpenShift route, see https://medium.com/itnext/how-to-access-your-app-behind-an-openshift-router-87cbae3e7185[details explained here]. Alternatively you can use a _LoadBalancer_ (in cloud) or _NodePort_ service type.
+
+Here are some example commands to create a deployment with the operator:
+[source,sh]
+----
+# Install operator from catalog
+oc apply -f subscription.yaml
+
+# Create namespace
+oc new-project pubsubplus
+
+# TLS Secret
+oc create secret tls tls-cert --cert=tls.crt --key=tls.key
+
+# Password for admin and monitor user
+oc apply -f secret-passwords.yaml
+
+# Create CR for the operator
+oc apply -f pubsub-ha.yaml
+
+# Create routes
+oc create route passthrough semp    --service=ha-pubsubplus --port=tls-semp
+oc create route passthrough amqp    --service=ha-pubsubplus --port=tls-amqp
+oc create route passthrough smf     --service=ha-pubsubplus --port=tls-smf
+oc create route passthrough smfweb  --service=ha-pubsubplus --port=tls-web
+oc create route passthrough mqtt    --service=ha-pubsubplus --port=tls-mqtt
+oc create route passthrough mqttweb --service=ha-pubsubplus --port=tls-mqttweb
+----
+
+Get the admin route hostname and open in the browser:
+
+```
+oc get route semp 
+```
+
+Open https://semp-pubsubplus.apps.your_cluster_domain.com and login with `admin` and the password set in the secret. Make sure you create a queue and a user before trying to send messages.
+
+== Send/receive messages
+
+Different protocols can be used via different routes (hostnames), but all on port 443:
+
+[cols="1,4"]
+|===
+| SMF 
+| `tcps://smf-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| SMF over websocket
+| `wss://smfweb-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| AMQP
+| `amqps://amqp-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| MQTT
+| `ssl://mqtt-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| MQTT over websocket
+| `wss://mqttweb-pubsubplus-helm.apps.your_cluster_domain.com:443`
+|===

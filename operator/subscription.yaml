@@ -1,0 +1,12 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: pubsubplus-eventbroker-operator
+  namespace: openshift-operators
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: pubsubplus-eventbroker-operator
+  source: certified-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: pubsubplus-eventbroker-operator.v1.4.0
