@@ -118,7 +118,7 @@ Get the admin route hostname and open in the browser:
 oc get route semp 
 ```
 
-Open https://semp-pubsubplus.apps.your_cluster_domain.com and login with `admin` and the password set in the secret. 
+Open `https://semp-pubsubplus.apps.your_cluster_domain.com` and login with `admin` and the password set in the secret. 
 
 == Messaging endpoints
 
