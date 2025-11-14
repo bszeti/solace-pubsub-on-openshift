@@ -1,0 +1,25 @@
+apiVersion: pubsubplus.solace.com/v1beta1
+kind: PubSubPlusEventBroker
+metadata:
+  name: ha
+spec:
+  redundancy: true
+  systemScaling:
+    maxConnections: 100
+    maxQueueMessages: 100
+    maxSpoolUsage: 100
+    messagingNodeCpu: "1"
+    messagingNodeMemory: "2500Mi"
+  
+  storage:
+    messagingNodeStorageSize: 10Gi
+    monitorNodeStorageSize: 1Gi
+
+  service:
+    type: ClusterIP
+
+  tls:
+    enabled: false
+    
+  adminCredentialsSecret: passwords
+  monitoringCredentialsSecret: passwords

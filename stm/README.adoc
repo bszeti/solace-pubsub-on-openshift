@@ -1,0 +1,75 @@
+= Solace Try-Me CLI
+
+The Solace Try-Me CLI `stm` is an easy tool to interact with the broker. It can be used to send/receive test messages and also for certain management operations like creating queues and clients.
+
+* Docs: https://docs.solace.com/Get-Started/tutorial/try-me-cli-tool.htm
+* GitHub: https://github.com/SolaceLabs/solace-tryme-cli
+
+The tool connects to two endpoints:
+
+* SEMP management API: used for management operation with `admin` user
+* WebSocket messaging port: to send/receive messages
+
+The tool stores configuration in a simple JSON file for convenience, so we don't have to specify all the parameters (e.g. url, credentials) in our CLI commands every time.
+
+== Init config
+
+Prepare basic configuration to our broker deployment like this:
+
+[source, sh]
+----
+# Create default config file
+stm config init
+
+# View/edit config file
+vi ~/.stm/stm-cli-config.json
+
+# Configure connection parameters
+OCPDOMAIN=apps.your_cluster_domain
+stm manage connection           --url wss://smfweb-pubsubplus.$OCPDOMAIN:443 --username test --password secret 
+stm manage semp-connection --semp-url https://semp-pubsubplus.$OCPDOMAIN:443 --semp-username admin --semp-password admin 
+
+# List config to verify parameters
+stm config list
+----
+
+== Send/receive messages
+
+Let's create a queue:
+
+[source, sh]
+----
+stm manage queue --create q1 --access-type NON-EXCLUSIVE
+----
+
+[NOTE]
+The default config also adds a subscription to the queue, it can be removed by editing `manage.queue.addSubscriptions` in the config JSON first
+
+Send some test messages to the queue:
+
+[source, sh]
+----
+# Send one message
+stm send --queue q1 --client-name sender --message 'Hello World!' --count 1 --user-properties "foo:bar" 
+
+# Send multiple messages
+stm send --queue q1 --client-name sender --message 'Hello World!' --count 10 --interval 0
+----
+
+Read messages from the queue:
+
+[source, sh]
+----
+# Receive all messages from queue
+stm receive --queue q1 --client-name receiver --output-mode FULL
+----
+
+== Client credentials
+
+By default authentication is not enabled on the broker for the messaging endpoints, so any credentials can be used to connect. This can be enabled on the UI with _Access Control / Client Authentication / Settings / Basic Authentication / Type: Internal Database_. Afterwards, to connect to the broker's messaging endpoints we need to create a _Client Username_ via the UI or with `stm` like this:
+
+[source, sh]
+----
+# Create a new client username
+stm manage client-username --create test --client-password secret --acl-profile default --client-profile default
+----

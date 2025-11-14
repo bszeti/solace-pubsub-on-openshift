@@ -2,7 +2,7 @@
 
 https://kubernetes.io/docs/concepts/extend-kubernetes/operator/[Kubernetes Operators] were designed to deploy complex - typically stateful - applications and manage their configuration a cloud-native way on K8s. 
 
-The *Solace PubSub+ Event Broker Operator* operator is _Certified_ for OpenShift and it's part of its default Software Catalog, which makes it the most convenient way to run the broker on a cluster.
+The *Solace PubSub+ Event Broker Operator* is _Certified_ for OpenShift and it's part of its default Software Catalog, which makes it the most convenient way to run the broker on a cluster.
 
 == Documentation and links
 
@@ -152,9 +152,25 @@ The main components are three _StatefulSets_ with one pod per each:
 * `ha-pubsubplus-b` is a replica *backup* instance that takes over in case of the primary broker goes down
 * `ha-pubsubplus-m` is a *monitoring* instance. Its purpose is to detect failures and avoid split-brain scenarios.
 
+A headless _Service_ and a pre-shared auth key is created for internal communication between the nodes.
+
 It's worth looking at the created _ConfigMap_ that has and init/startup script, and also an interesting readiness check: 
 
 * The `readiness_check.sh` is involved in the primary-backup failover mechanism. In case of issues it sets the Pod's label to `active=false`
 ** There is a custom _Role_ `ha-pubsubplus-podtagupdater` that permits changing labels for the _ServiceAccount_ `ha-pubsubplus-sa` running the Pod
 
 == Additional notes
+* HA deployment or minimal developer mode
+* Common operator based deployment features: 
+** Pod image, resources (primary, backup), annotations, labels, env vars, security context, placement
+** Service type, ports
+** Storage class, initial size
+*** For storage resize edit the _PersistentVolumeClaims_ directly
+*** _PersistentVolumeClaims_ are retained for optional reuse, can be removed directly if required
+** Overall patching of created resources is not supported
+* Supports Prometheus monitoring
+* Broker configuration is not managed by the operator
+** Only initial admin/monitoring password, scaling parameters are supported
+*** After changing passwords in the related _Secret_ we also have to update it manually in each Pod using the `cli`, see details https://docs.solace.com/Admin/Configuring-Internal-CLI-User-Accounts.htm[here].
+* Supports TLS certificate rotation
+* It's possible to migrate from a Helm based installation by reusing the _PersistentVolumes_

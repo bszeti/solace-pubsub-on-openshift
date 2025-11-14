@@ -16,11 +16,10 @@ spec:
     monitorNodeStorageSize: 1Gi
 
   service:
-    type: ClusterIP
+    type: LoadBalancer
 
   tls:
-    enabled: true
-    serverTlsConfigSecret: tls-cert
+    enabled: false
   
   adminCredentialsSecret: passwords
   monitoringCredentialsSecret: passwords
