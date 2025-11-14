@@ -5,11 +5,11 @@ https://camel.apache.org/[Apache Camel] is well-known an open-source, Java-based
 *Camel Solace PubSub Test* is a simple application that can be used to test the Event Broker. It's based on https://docs.redhat.com/en/documentation/red_hat_fuse/[Red Hat Fuse 7] which is the enterprise ready version of Camel on Spring Boot runtime.
 
 * GitHub: https://github.com/bszeti/camel-solace-pubsub-test
-* Quay: ??
+* Quay: https://quay.io/repository/bszeti/camel-solace-pubsub-test[quay.io/bszeti/camel-solace-pubsub-test]
 
 The app is useful to test different messaging use cases and reproduce issues experienced in more complex architectures or production environment. Using Camel's event driven nature - and Spring Boot's convention over configuration policy - makes it simple to extend or modify the routes to specific scenarios.
 
-=== Core features:
+== Features:
 
 * *Send messages*
 ** Set message body and headers
@@ -17,7 +17,6 @@ The app is useful to test different messaging use cases and reproduce issues exp
 ** Send by multiple threads
 ** Given count and pace
 ** Retries
-** Transacted send
 * *Receive message*
 ** Multiple consumers
 ** Consumer cashing
@@ -33,13 +32,13 @@ The app is useful to test different messaging use cases and reproduce issues exp
 |===
 | *connection.type*
 | *TLS URL*
-| SOLACE 
+| SOLACE (SMF JMS)
 | `tcps://smf-pubsubplus-helm.apps.your_cluster_domain.com:443`
 | SOLACE (over websocket)
 | `wss://smfweb-pubsubplus-helm.apps.your_cluster_domain.com:443`
-| AMQP
+| AMQP (Qpid JMS)
 | `amqps://amqp-pubsubplus-helm.apps.your_cluster_domain.com:443`
-| MQTT
+| MQTT (Paho Java)
 | `ssl://mqtt-pubsubplus-helm.apps.your_cluster_domain.com:443`
 | MQTT (over websocket)
 | `wss://mqttweb-pubsubplus-helm.apps.your_cluster_domain.com:443`
@@ -49,7 +48,7 @@ The app is useful to test different messaging use cases and reproduce issues exp
 
 See all the parameters in https://github.com/bszeti/camel-solace-pubsub-test/blob/main/src/main/resources/application.properties[application.properties]
 
-Example config to send a message:
+Example `application-send.properties` config to send a message:
 [source,properties]
 ----
 connection.type=SOLACE
@@ -67,3 +66,25 @@ send.message.length=100
 send.headers.count=2
 send.headers.length=20
 ----
+
+Run as: `mvn spring-boot:run -Dspring-boot.run.profiles=send`
+
+== Run as K8s job
+
+The tool is also available as a container at `quay.io/bszeti/camel-solace-pubsub-test`. See https://github.com/bszeti/camel-solace-pubsub-test/blob/main/Dockerfile[Dockefile] to build your own image.
+
+To use it in OpenShift as a _Job_:
+
+* Create a _ConfigMap_ with one or multiple `application-[profile].properties`, see https://github.com/bszeti/camel-solace-pubsub-test/blob/main/yamls/configmap.yaml[configmap.yaml]
+* Create a _Job_ with the _ConfigMap_ mounted and a custom command to execute one or multiple `run` command activating a `[profile]`, see https://github.com/bszeti/camel-solace-pubsub-test/blob/main/yamls/job.yaml[job.yaml]
+
+For example:
+[source,sh]
+----
+$ oc apply -f yamls/configmap.yaml
+$ oc create -f yamls/job.yaml
+job.batch/camel-solace-pubsub-test-send-receivepgpfk created
+$ oc logs -f job.batch/camel-solace-pubsub-test-send-receivepgpfk
+----
+
+Complex automated test scenarios can be executed by provisioning a broker simply with the operator and running multiple _Jobs_ parallel, while afterwards we can simply delete the whole namespace and execute clean test runs again whenever needed, without permanently allocating resources for a test environment.
