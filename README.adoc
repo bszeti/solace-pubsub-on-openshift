@@ -17,6 +17,7 @@ This guide is about deploying and using Solace PubSub+ on OpenShift.
 * link:helm[*Helm*]
 * link:operator[*Operator*]
 * link:stm[*Solace Try-Me CLI*]
+* link:camel[*Java test app with Apache Camel*]
 * link:tls[*TLS certificate*]
 
 == Other links
