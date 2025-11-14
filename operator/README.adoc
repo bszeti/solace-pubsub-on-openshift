@@ -118,7 +118,7 @@ Get the admin route hostname and open in the browser:
 oc get route semp 
 ```
 
-Open https://semp-pubsubplus.apps.your_cluster_domain.com and login with `admin` and the password set in the secret. Make sure you create a queue and a user before trying to send messages.
+Open https://semp-pubsubplus.apps.your_cluster_domain.com and login with `admin` and the password set in the secret. 
 
 == Send/receive messages
 
@@ -137,3 +137,24 @@ Different protocols can be used via different routes (hostnames), but all on por
 | MQTT over websocket
 | `wss://mqttweb-pubsubplus-helm.apps.your_cluster_domain.com:443`
 |===
+
+Make sure you create a queue before trying to send messages. By default authentication is not enforced on messaging endpoints.
+
+== Deployment overview
+
+The Operator creates several resources:
+
+image::image/operator-resources.png[]
+
+The main components are three _StatefulSets_ with one pod per each:
+
+* `ha-pubsubplus-p` is the *primary* broker and the `ha-pubsubplus` _Service_ points to this `active` pod
+* `ha-pubsubplus-b` is a replica *backup* instance that takes over in case of the primary broker goes down
+* `ha-pubsubplus-m` is a *monitoring* instance. Its purpose is to detect failures and avoid split-brain scenarios.
+
+It's worth looking at the created _ConfigMap_ that has and init/startup script, and also an interesting readiness check: 
+
+* The `readiness_check.sh` is involved in the primary-backup failover mechanism. In case of issues it sets the Pod's label to `active=false`
+** There is a custom _Role_ `ha-pubsubplus-podtagupdater` that permits changing labels for the _ServiceAccount_ `ha-pubsubplus-sa` running the Pod
+
+== Additional notes

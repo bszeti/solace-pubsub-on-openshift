@@ -1,0 +1,28 @@
+= TLS certificate
+
+There is always a process to get TLS certificates for a certain hostname in enterprise environments, but it can be a bit of a headache for a demo or workshop. Here are a few quick options collected to consider.
+
+We're focusing on how to get `tls.key` and `tls.crt` for enabling TLS in a Solace broker stored in a Secret in our namespace.
+
+
+=== OpenShift Ingress certificate
+
+An an OpenShift cluster comes with a wildcard certificate for the Routes, which is either signed by a self-signed issuer or - if we're lucky - with a certificate coming from a well-know CA. It's an easy solution because all the default Route hostname patterns match the one in the certificate, so we don't have to worry about hostname mismatch if we connect to the broker through a Route.
+
+We can export and use this certificate - as a cluster-admin - like this:
+
+```
+$ oc extract -n openshift-ingress secret/cert-manager-ingress-cert
+$ oc create  -n pubsubplus secret tls tls-cert --cert=tls.crt --key=tls.key
+```
+
+or in one step:
+
+```
+oc create secret generic --type=kubernetes.io/tls -n pubsubplus tls-cert \
+--from-literal=tls.key="$(oc extract -n openshift-ingress secret/cert-manager-ingress-cert --to=- --keys=tls.key)"$'\n' \
+--from-literal=tls.crt="$(oc extract -n openshift-ingress secret/cert-manager-ingress-cert --to=- --keys=tls.crt)"$'\n'
+```
+
+=== Certificate-manager
+

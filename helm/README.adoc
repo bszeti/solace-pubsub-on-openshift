@@ -78,7 +78,7 @@ Get the admin route hostname and open in the browser:
 oc get route semp 
 ```
 
-Open https://semp-pubsubplus-helm.apps.your_cluster_domain.com and login with `admin` and the password set in the values file. Make sure you create a queue and a user before trying to send messages.
+Open https://semp-pubsubplus-helm.apps.your_cluster_domain.com and login with `admin` and the password set in the values file. 
 
 == Send/receive messages
 
@@ -98,6 +98,8 @@ Different protocols can be used via different routes (hostnames), but all on por
 | `wss://mqttweb-pubsubplus-helm.apps.your_cluster_domain.com:443`
 |===
 
+Make sure you create a queue before trying to send messages. By default authentication is not enforced on messaging endpoints.
+
 == Deployment overview
 
 The Helm chart is easy to understand and it creates a couple of resources:
@@ -113,7 +115,7 @@ The main component is a _StatefulSet_ with 3 pods - and a headless service:
 It's worth looking at the created _ConfigMap_ that has and init/startup script, and also an interesting readiness check: 
 
 * The `readiness_check.sh` is involved in the primary-backup failover mechanism. In case of issues it sets the Pod's label to `active=false`
-* There is custom _Role_ that permits label changes for the _ServiceAccount_ running the Pod
+** There is custom _Role_ that permits label changes for the _ServiceAccount_ running the Pod
 
 == Additional notes
 
