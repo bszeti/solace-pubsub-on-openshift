@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: poubsub-monitor
+spec:
+  endpoints:
+    - interval: 10s
+      path: /solace-std
+      port: tcp-metrics
+    - interval: 10s
+      path: /solace-det
+      port: tcp-metrics
+  jobLabel: pubsubplus-metrics
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pubsubpluseventbroker
+      app.kubernetes.io/component: metricsexporter
+      app.kubernetes.io/instance: ha

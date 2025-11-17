@@ -1,0 +1,41 @@
+# oc apply -f configmap.yaml
+# oc create -f job.yaml
+# oc logs -f job.batch/camel-solace-pubsub-test-send-...
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: camel-solace-pubsub-test-send-receive
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: main
+          resources:
+            limits:
+              cpu: '2'
+              memory: 1Gi
+            requests:
+              cpu: 200m
+              memory: 1Gi
+          command:
+            - /bin/sh
+            - '-c'
+            - >-
+              export JAVA_OPTIONS="-Dspring.profiles.active=send"; /usr/local/s2i/run; 
+              export JAVA_OPTIONS="-Dspring.profiles.active=receive"; /usr/local/s2i/run;
+          volumeMounts:
+            - name: configmap-camel-solace-pubsub-test
+              readOnly: true
+              mountPath: /deployments/application-send.properties
+              subPath: application-send.properties
+            - name: configmap-camel-solace-pubsub-test
+              readOnly: true
+              mountPath: /deployments/application-receive.properties
+              subPath: application-receive.properties
+          image: quay.io/bszeti/camel-solace-pubsub-test:latest
+      volumes:
+        - name: configmap-camel-solace-pubsub-test
+          configMap:
+            name: camel-solace-pubsub-test
+            defaultMode: 420

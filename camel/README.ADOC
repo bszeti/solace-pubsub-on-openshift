@@ -88,6 +88,8 @@ send.headers.length=20
 
 Run as: `mvn spring-boot:run -Dspring-boot.run.profiles=send`
 
+Check metric query `solace_queue_spool_usage_msgs{queue_name='q1'}` to see current length size.
+
 == Run as K8s job
 
 The tool is also available as a container at `quay.io/bszeti/camel-solace-pubsub-test`. See https://github.com/bszeti/camel-solace-pubsub-test/blob/main/Dockerfile[Dockefile] to build your own image.

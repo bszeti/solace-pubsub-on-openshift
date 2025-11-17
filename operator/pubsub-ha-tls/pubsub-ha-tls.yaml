@@ -23,3 +23,8 @@ spec:
   
   adminCredentialsSecret: passwords
   monitoringCredentialsSecret: passwords
+
+  monitoring:
+    enabled: true
+    metricsEndpoint:
+      listenTLS: false

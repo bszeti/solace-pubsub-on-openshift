@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: camel-solace-pubsub-test
+data:
+  application-send.properties: |-
+    connection.type=SOLACE
+    connection.remoteUrl=tcp://ha-pubsubplus:55555
+    connection.username=test
+    connection.password=secret
+    send.enabled=true
+    send.threads=2
+    send.count=5
+    send.queue=q1
+    send.delay=0
+    send.shutdownEnabled=true
+    send.message=Hello World!
+    send.headers={myheader: "myvalue", foo: "bar"}
+  
