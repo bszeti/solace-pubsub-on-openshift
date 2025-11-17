@@ -88,7 +88,7 @@ send.headers.length=20
 
 Run as: `mvn spring-boot:run -Dspring-boot.run.profiles=send`
 
-Check metric query `solace_queue_spool_usage_msgs{queue_name='q1'}` to see current length size.
+Check metric query `solace_queue_spool_usage_msgs{queue_name='q1'}` to see current length size or `solace_queue_msg_spooled{queue_name='q1'}` for total messages sent to the queue.
 
 == Run as K8s job
 
