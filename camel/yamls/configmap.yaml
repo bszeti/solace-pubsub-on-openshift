@@ -10,7 +10,7 @@ data:
     connection.password=secret
     send.enabled=true
     send.threads=2
-    send.count=50000
+    send.count=10000
     send.queue=q1
     send.delay=0
     send.shutdownEnabled=true

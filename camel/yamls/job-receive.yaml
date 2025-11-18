@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: camel-solace-pubsub-test-send
+  generateName: camel-solace-pubsub-test-receive
 spec:
   template:
     spec:
@@ -22,29 +22,23 @@ spec:
               /usr/local/s2i/run
           env:
             - name: CONNECTION_TYPE
-              value: "SOLACE"
+              value: "AMQP"
             - name: CONNECTION_REMOTE_URL
-              value: "tcp://ha-pubsubplus:55555"
+              value: "amqp://ha-pubsubplus:5672"
             - name: CONNECTION_USERNAME
               value: "test"
             - name: CONNECTION_PASSWORD
               value: "secret"
-            - name: SEND_ENABLED
+            - name: RECEIVE_ENABLED
               value: "true"
-            - name: SEND_THREADS
-              value: "2"
-            - name: SEND_COUNT
-              value: "6"
-            - name: SEND_QUEUE
+            - name: RECEIVE_QUEUE
               value: "q1"
-            - name: SEND_DELAY
-              value: "0"
-            - name: SEND_SHUTDOWNENABLED
-              value: "true"
-            - name: SEND_MESSAGE
-              value: "Hello World!"
-            - name: SEND_HEADERS
-              value: '{myheader: "myvalue", foo: "bar"}'
+            - name: RECEIVE_TRANSACTED
+              value: "false"
+            - name: RECEIVE_CONCURRENTCONSUMERS
+              value: "2"
+            - name: RECEIVE_SHUTDOWNIDLESEC
+              value: "30"
           volumeMounts:
             - name: configmap-camel-solace-pubsub-test
               readOnly: true

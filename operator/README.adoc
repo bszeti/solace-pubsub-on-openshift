@@ -56,7 +56,7 @@ spec:
     maxQueueMessages: 100
     maxSpoolUsage: 100
     messagingNodeCpu: "1"
-    messagingNodeMemory: "2500Mi"
+    messagingNodeMemory: "3500Mi"
   storage:
     messagingNodeStorageSize: 10Gi
     monitorNodeStorageSize: 1Gi
@@ -157,15 +157,15 @@ Clients outside the cluster can connect via different TLS protocols through diff
 [cols="1,3"]
 |===
 | SMF 
-| `tcps://smf-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| `tcps://smf-pubsubplus.apps.your_cluster_domain.com:443`
 | SMF over websocket
-| `wss://smfweb-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| `wss://smfweb-pubsubplus.apps.your_cluster_domain.com:443`
 | AMQP
-| `amqps://amqp-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| `amqps://amqp-pubsubplus.apps.your_cluster_domain.com:443`
 | MQTT
-| `ssl://mqtt-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| `ssl://mqtt-pubsubplus.apps.your_cluster_domain.com:443`
 | MQTT over websocket
-| `wss://mqttweb-pubsubplus-helm.apps.your_cluster_domain.com:443`
+| `wss://mqttweb-pubsubplus.apps.your_cluster_domain.com:443`
 |===
 
 Make sure you create a queue before trying to send messages. By default authentication is not enforced on messaging endpoints.

@@ -22,3 +22,6 @@ oc create route passthrough smf     --service=ha-pubsubplus --port=tls-smf
 oc create route passthrough smfweb  --service=ha-pubsubplus --port=tls-web
 oc create route passthrough mqtt    --service=ha-pubsubplus --port=tls-mqtt
 oc create route passthrough mqttweb --service=ha-pubsubplus --port=tls-mqttweb
+
+# Prometheus metric collection
+oc apply -f servicemonitor.yaml

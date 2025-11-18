@@ -9,17 +9,18 @@ spec:
     maxQueueMessages: 100
     maxSpoolUsage: 100
     messagingNodeCpu: "1"
-    messagingNodeMemory: "2500Mi"
+    messagingNodeMemory: "3500Mi"
   
   storage:
     messagingNodeStorageSize: 10Gi
     monitorNodeStorageSize: 1Gi
 
   service:
-    type: LoadBalancer
+    type: ClusterIP
 
   tls:
-    enabled: false
+    enabled: true
+    serverTlsConfigSecret: tls-cert
   
   adminCredentialsSecret: passwords
   monitoringCredentialsSecret: passwords
