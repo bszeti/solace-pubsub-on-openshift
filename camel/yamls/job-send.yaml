@@ -34,7 +34,7 @@ spec:
             - name: SEND_THREADS
               value: "2"
             - name: SEND_COUNT
-              value: "6"
+              value: "10000"
             - name: SEND_QUEUE
               value: "q1"
             - name: SEND_DELAY
